@@ -1,0 +1,19 @@
+# Datos crudos descargados: se regeneran con los scripts de gee/ (pesados y
+# con enlaces temporales ligados a la cuenta de Earth Engine del autor)
+data/raw/
+
+# Auxiliares de GDAL/QGIS
+*.aux.xml
+*.qgs~
+*.qgz~
+*.gpkg-shm
+*.gpkg-wal
+
+# Python
+__pycache__/
+*.pyc
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

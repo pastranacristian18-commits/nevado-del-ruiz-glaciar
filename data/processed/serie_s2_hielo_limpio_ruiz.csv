@@ -1,0 +1,26 @@
+fecha,despejado_zona_glaciar,area_km2_hielo_limpio_ndsi040,nota
+2020-01-04,1.00,3.662,seca
+2020-01-09,0.97,3.325,seca
+2020-02-03,1.00,3.108,seca
+2021-01-28,0.91,6.786,seca
+2022-01-28,0.91,2.693,seca
+2022-10-10,0.95,41.787,nevada generalizada (no es glaciar)
+2022-10-30,0.94,8.694,nieve fresca + ceniza
+2023-01-28,0.95,1.505,seca; glaciar cubierto de ceniza (visual)
+2024-01-03,0.98,1.093,seca; glaciar cubierto de ceniza (visual)
+2024-01-08,1.00,0.928,seca; glaciar cubierto de ceniza (visual)
+2024-01-23,0.96,1.107,seca; glaciar cubierto de ceniza (visual)
+2024-08-15,0.99,4.245,mismo dia que Landsat 8 (4.350 km2)
+2025-01-12,1.00,0.525,seca
+2025-01-17,0.98,0.498,seca
+2025-01-22,1.00,0.486,seca
+2025-07-31,0.99,9.830,probable nieve fresca
+2025-12-13,0.95,7.081,
+2025-12-23,0.92,5.691,
+2025-12-28,0.98,5.166,
+2026-03-20,0.94,1.934,
+2026-05-09,0.99,5.628,mismo dia que Landsat 9 (5.826 km2)
+2026-07-28,0.90,4.323,mismo dia que Landsat 9 (4.501 km2)
+2026-07-31,0.98,3.489,
+2026-08-10,1.00,2.976,
+2026-09-24,0.92,15.784,probable nevada

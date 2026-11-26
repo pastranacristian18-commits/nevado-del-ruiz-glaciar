@@ -1,0 +1,27 @@
+Cota media celda ERA5-Land (Copernicus DEM): 4283 m  (píxeles: 136160)
+
+TENDENCIAS (Mann-Kendall + pendiente de Sen)
+  t2m_c                  Sen = +0.103 /década  (IC95 +0.037 a +0.184)  MK tau=+0.29 p=0.005  n=45
+  isoterma0_m            Sen = +15.824 /década  (IC95 +5.625 a +28.333)  MK tau=+0.29 p=0.005  n=45
+  precip_chirps_mm       Sen = +42.451 /década  (IC95 -10.357 a +103.182)  MK tau=+0.17 p=0.109  n=45
+  nevada_era5_mm         Sen = -1.519 /década  (IC95 -3.250 a -0.385)  MK tau=-0.26 p=0.011  n=45
+  area_km2_mapbiomas     Sen = -2.153 /década  (IC95 -2.453 a -1.837)  MK tau=-1.00 p=0.000  n=40
+
+CORRELACIONES con ΔA (cambio anual de área MapBiomas, km²) — Spearman
+  ΔA vs oni                rho=-0.30  p=0.062  n=39
+  ΔA vs oni_prev           rho=-0.13  p=0.417  n=39
+  ΔA vs t2m_c              rho=-0.28  p=0.084  n=39
+  ΔA vs precip_chirps_mm   rho=+0.25  p=0.129  n=39
+  ΔA vs nevada_era5_mm     rho=+0.23  p=0.151  n=39
+
+CORRELACIONES clima local vs ONI — Spearman
+  ONI vs t2m_c              rho=+0.54  p=0.000  n=45
+  ONI vs precip_chirps_mm   rho=-0.53  p=0.000  n=45
+  ONI vs nevada_era5_mm     rho=-0.33  p=0.027  n=45
+
+AÑOS EL NIÑO (ONI anual ≥ 0,5) vs resto
+  ΔA mediana El Niño = -0.253 km² (n=8) | resto = -0.117 km² (n=31)  Mann-Whitney (El Niño < resto) p=0.096
+  T2m media El Niño = 8.54 °C | La Niña = 8.08 °C | neutro = 8.50 °C
+
+CAUTELAS: n≈40 y autocorrelación → p-valores optimistas; MapBiomas filtrado temporalmente;
+ERA5-Land ~9 km (usar anomalías); isoterma 0 °C estimada por gradiente fijo 6,5 °C/km; exploratorio.
