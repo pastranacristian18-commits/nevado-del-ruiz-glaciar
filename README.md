@@ -14,7 +14,8 @@ Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial
 
 | Finding | Evidence |
 |---|---|
-| Ruiz lost ~75 % of its glacier area between 1985 and 2024 | MapBiomas Colombia Collection 3: 14.73 → 3.68 km² |
+| Ruiz has lost most of its glacier since the 1980s: **~62 % according to the official IDEAM inventory**, ~75 % according to MapBiomas | IDEAM: 18.7 km² (1980s) → 7.17 ± 0.30 km² (2024). MapBiomas Col. 3: 14.73 → 3.68 km² (1985–2024) |
+| **The official inventory independently confirms the ash effect** | IDEAM reports ~88 % of the glacier covered by ash in 2024. The IDEAM/MapBiomas area ratio grows from 1.1–1.3 (until 2021) to 1.95 (2024): spectral methods miss ash-covered ice. See [`validation/comparacion_ideam.md`](validation/comparacion_ideam.md) |
 | Independent clean scenes confirm the trend | Landsat outlines: 10.71 km² (2003) → 4.35 km² (2024) |
 | Sentinel-2 and Landsat agree on the same day | 2–4 % difference |
 | **Volcanic ash hides the glacier** | In the dry season visible ice drops to ~0.5–1.5 km², then returns to ~3–4 km² months later |
@@ -24,6 +25,8 @@ Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial
 | Can machine learning map ice under ash? | **Not yet.** F1 = 0.88 with leave-one-scene-out, but 0.25 with leave-one-sector-out (same as the NDSI baseline): the apparent skill was spatial leakage |
 
 📄 **Full methodology report (English):** [`reports/methodology_report_nevado_del_ruiz_en.pdf`](reports/methodology_report_nevado_del_ruiz_en.pdf) · Spanish: [`reports/informe_metodologia_nevado_del_ruiz.pdf`](reports/informe_metodologia_nevado_del_ruiz.pdf). Both include everything that failed and why.
+
+![IDEAM vs MapBiomas vs this study](reports/figuras/ideam_comparison_en.png)
 
 ![Ash over the glacier, Sentinel-2](reports/figuras/s2_periodo_critico.png)
 *Sentinel-2, critical period. Top: true colour (ash appears grey). Bottom: false colour SWIR1-NIR-Green (ice under ash shows as dull blue-green with the glacier's shape).*
@@ -45,7 +48,7 @@ Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial
 | `data/processed/` | Derived series and tables (CSV) |
 | `data_registry/` | One record per data source: provider processing, resolution, licence |
 | `sampling/` | Visual scene selection |
-| `validation/` | MapBiomas audit, climate results, ML results |
+| `validation/` | MapBiomas audit, IDEAM comparison, climate results, ML results |
 | `reports/` | PDF reports (EN/ES), figures, communication pieces |
 
 Raw data (`data/raw/`) is not versioned. It is regenerated with `gee/04`, `gee/06` and `gee/07`.
@@ -66,6 +69,7 @@ Raw data (`data/raw/`) is not versioned. It is regenerated with `gee/04`, `gee/0
 |---|---|
 | Automatic Landsat series (v1–v3) | Discarded and documented |
 | MapBiomas series + audit with own outlines | Done (semi-automatic outlines, manual review pending) |
+| Comparison with the official IDEAM glacier inventory | Done |
 | Sentinel-2 + Cloud Score+ | Done |
 | Climate and El Niño | Done (exploratory) |
 | ML for ice under ash (v1) | Done: documented negative result |

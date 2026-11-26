@@ -14,7 +14,8 @@ Proyecto #1 de **ANTARES Geospatial Lab**, portafolio de proyectos geoespaciales
 
 | Hallazgo | Evidencia |
 |---|---|
-| El Ruiz perdió ~75 % de su superficie glaciar entre 1985 y 2024 | MapBiomas Colombia Col. 3: 14,73 → 3,68 km² |
+| El Ruiz ha perdido la mayor parte de su glaciar desde los años 80: **~62 % según el inventario oficial del IDEAM**, ~75 % según MapBiomas | IDEAM: 18,7 km² (década de 1980) → 7,17 ± 0,30 km² (2024). MapBiomas Col. 3: 14,73 → 3,68 km² (1985–2024) |
+| **El inventario oficial confirma el efecto de la ceniza** | El IDEAM reporta ~88 % del glaciar cubierto de ceniza en 2024. La relación de áreas IDEAM/MapBiomas pasa de 1,1–1,3 (hasta 2021) a 1,95 (2024): los métodos espectrales no ven el hielo cubierto. Ver [`validation/comparacion_ideam.md`](validation/comparacion_ideam.md) |
 | Escenas limpias independientes confirman la tendencia | Contornos Landsat: 10,71 km² (2003) → 4,35 km² (2024) |
 | Sentinel-2 y Landsat coinciden el mismo día | Diferencias de 2–4 % |
 | **La ceniza esconde el glaciar** | En temporada seca el hielo visible cae a ~0,5–1,5 km² y meses después vuelve a ~3–4 km² |
@@ -23,6 +24,8 @@ Proyecto #1 de **ANTARES Geospatial Lab**, portafolio de proyectos geoespaciales
 | ¿El Niño acelera la pérdida de hielo? | Sugestivo (ρ = −0,30; p = 0,06), **no demostrado** |
 
 📄 **Informe metodológico completo:** [`reports/informe_metodologia_nevado_del_ruiz.pdf`](reports/informe_metodologia_nevado_del_ruiz.pdf) — incluye todo lo que falló y por qué.
+
+![IDEAM vs MapBiomas vs este estudio](reports/figuras/comparacion_ideam.png)
 
 ![Ceniza sobre el glaciar, Sentinel-2](reports/figuras/s2_periodo_critico.png)
 
@@ -64,6 +67,7 @@ Los datos crudos (`data/raw/`) no se versionan: se regeneran con `gee/04_descarg
 |---|---|
 | Series automáticas Landsat (v1–v3) | Descartadas y documentadas |
 | Serie MapBiomas + auditoría con contornos propios | Hecho (contornos semiautomáticos, pendiente revisión manual) |
+| Comparación con el inventario oficial del IDEAM | Hecho |
 | Sentinel-2 + Cloud Score+ | Hecho |
 | Clima y El Niño | Hecho (exploratorio) |
 | Machine Learning para hielo bajo ceniza (v1) | Hecho: resultado negativo documentado — el ML parece funcionar (F1 0,88) pero se cae al dejar un sector fuera (F1 ≈ 0,25, igual que NDSI). Ver [`validation/ml_hielo_bajo_ceniza.md`](validation/ml_hielo_bajo_ceniza.md) |

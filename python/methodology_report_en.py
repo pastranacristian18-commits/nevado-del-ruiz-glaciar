@@ -100,7 +100,8 @@ p("The final workflow combined: (1) the official MapBiomas Colombia Collection 3
   "of clean Landsat scenes using a criterion independent of the cloud mask; (3) semi-automatic outlines with sensitivity analysis and "
   "visual review; (4) a dense Sentinel-2 series with Cloud Score+ and cross-sensor validation; (5) an exploratory analysis of "
   "climate (ERA5-Land, CHIRPS) and El Niño (NOAA ONI); and (6) a machine-learning experiment to map ice under ash.")
-box("<b>Key results.</b> (a) MapBiomas records 14.73 km² of glacier in 1985 and 3.68 km² in 2024 (−75 %). "
+box("<b>Key results.</b> (a) MapBiomas records 14.73 km² of glacier in 1985 and 3.68 km² in 2024 (−75 %); the official IDEAM "
+    "inventory records 18.7 km² in the 1980s and 7.17 ± 0.30 km² in 2024 (−62 %). "
     "(b) Our outlines on high-confidence scenes give 10.71 km² (2003), 6.36 km² (2017), 4.35 km² (2024) and 4.50 km² (2026); "
     "they differ from MapBiomas by −10 % to +18 %. (c) On the same day, Sentinel-2 and Landsat agree within 2–4 %. "
     "(d) In the dry season visible ice drops to ~0.5–1.5 km² and returns to ~3–4 km² months later: this is ash, not loss. "
@@ -205,7 +206,7 @@ for i in range(5):
 tabla(filas, [1.6, 1.6] * 3)
 p("<b>Critical observations.</b> (a) The series is almost monotonic, indicating temporal filters (not an error, but it must be stated); "
   "(b) there are abrupt drops in 1990→1991 (−1.96 km²), 2013→2014 (−0.84 km²) and 2021→2023 (−2.47 km²) that coincide with periods of "
-  "volcanic activity; (c) the national agency (IDEAM) figure (~7.7 km² for an unconfirmed year) was not used because it could not be read in the original document.")
+  "volcanic activity; (c) the comparison with the official IDEAM inventory is presented in Section 12.")
 
 # =============================== 7. VISUAL SELECTION ===============================
 h1("7. Phase 3 — Visual selection of Landsat scenes")
@@ -343,8 +344,37 @@ box("<b>Interpretation.</b> The F1 of 0.88 is largely <b>spatial information lea
 p("<b>Next iteration:</b> independent labels for covered ice (high-resolution imagery or field data), Sentinel-1 radar, multi-temporal features "
   "(change since the last clean scene) and a transfer test on another glacier (Santa Isabel, Tolima).")
 
+# =============================== 12. IDEAM ===============================
+h1("12. Phase 8 — Comparison with the official IDEAM glacier inventory")
+p("<b>Sources read in the original PDFs.</b> IDEAM (Colombia's national hydro-meteorological institute), <i>State of Colombian Glaciers "
+  "report 2023</i>, Table 17 (Ruiz series up to 2022), and <i>2024 report</i>, Table 1 and text: Ruiz glacier area on 20 February 2024 was "
+  "<b>7.17 ± 0.30 km²</b> (PlanetScope imagery). The same report states that <b>about 88 % of the glacier surface was covered by volcanic "
+  "ash in 2024</b>, that ash thicker than 5 cm acts as thermal insulation, and that the largest retreat occurred in the southern sector, "
+  "where there was less ash.")
+tabla([
+    ["Year", "IDEAM (km²)", "MapBiomas (km²)", "IDEAM / MapBiomas", "This study, clean ice (km²)"],
+    ["1980s", "18.7", "14.73 (1985)", "1.27", "—"],
+    ["1990s", "14.1", "10.65 (1995)", "1.32", "—"],
+    ["2010", "10.3", "9.36", "1.10", "—"],
+    ["2017", "8.88", "7.12", "1.25", "6.36"],
+    ["2020", "8.14", "6.32", "1.29", "—"],
+    ["2022", "7.68", "5.19", "1.48", "—"],
+    ["2024", "7.17 ± 0.30", "3.68", "1.95", "4.35 (August)"],
+], [3.0, 2.6, 3.0, 3.2, 4.4])
+figura(FIG / "ideam_comparison_en.png", 14.5, "Figure 6. Three ways to measure the same glacier: IDEAM (high resolution, includes ash-covered ice), "
+       "MapBiomas (automatic Landsat classification) and this study (visible clean ice). Bottom: IDEAM/MapBiomas area ratio.")
+box("<b>Reading.</b> All three sources agree on the trend but not on the magnitude. IDEAM always reports more area; the IDEAM/MapBiomas "
+    "ratio stays at 1.1–1.3 until 2021, then rises to 1.48 in 2022 and <b>1.95 in 2024</b>, the year with ~88 % of the glacier under ash. "
+    "This is an <b>official, independent confirmation</b> of the project's central finding: spectral methods measure visible ice, and ash "
+    "widens the gap. In 2024 the difference from our clean-ice area (7.17 vs 4.35 km²) is ~2.8 km², consistent with the earlier estimate "
+    "of ~3 km² hidden by ash. The 1.27–1.32 ratio in the 1980s and 1990s shows that resolution, glacier definition and image dates also "
+    "matter, not only ash.")
+p("<b>Adjusted claims.</b> Loss since the 1980s is <b>~62 % according to IDEAM</b> (18.7 → 7.17 km²) and ~75 % according to MapBiomas "
+  "(1985–2024); the MapBiomas figure is inflated in recent years by ash. Given the official 2024 figure, it is reasonable to state that "
+  "MapBiomas underestimates glacier extent in 2022–2024.")
+
 # =============================== 12. FAILURES ===============================
-h1("12. Complete log of what failed")
+h1("13. Complete log of what failed")
 tabla([
     ["#", "What failed", "Cause", "How it was resolved / status"],
     ["1", "Impossible v1 series (25th percentile)", "Fmask erases ice; percentile picks dirty dates", "Discarded and documented"],
@@ -365,7 +395,7 @@ tabla([
 ], [0.9, 4.2, 5.1, 5.6])
 
 # =============================== 13. LIMITATIONS ===============================
-h1("13. Limitations and uncertainty")
+h1("14. Limitations and uncertainty")
 bullets([
     "The dominant uncertainty is the <b>glacier surface</b> (ash and fresh snow), not the sensor or the pixel.",
     "Semi-automatic outlines with a single preliminary visual review; a detailed review by the author and a second interpreter are missing.",
@@ -376,11 +406,11 @@ bullets([
     "Exploratory statistics: small n and autocorrelation; correlation does not imply causation.",
     "Machine-learning labels for ash scenes come from a different date (5–8 months); only one reference outline.",
     "No field data (Level 2): no figure is calibrated with in-situ measurements.",
-    "The literature references in Section 17 are cited from memory and must be verified before formal publication.",
+    "The literature references in Section 18 are cited from memory and must be verified before formal publication.",
 ])
 
 # =============================== 14. CLAIMS ===============================
-h1("14. What can and cannot be claimed")
+h1("15. What can and cannot be claimed")
 tabla([
     ["Claim", "Status"],
     ["Ruiz lost ~75 % of its glacier area between 1985 and 2024 according to MapBiomas Colombia", "Yes (citing the source)"],
@@ -390,14 +420,15 @@ tabla([
     ["Regional temperature rises ~0.1 °C per decade", "Yes (ERA5-Land, 9 km cell)"],
     ["El Niño makes Ruiz warmer and drier", "Yes"],
     ["El Niño accelerates ice loss", "Not demonstrated (suggestive)"],
-    ["MapBiomas is wrong in 2023", "No"],
+    ["MapBiomas underestimates glacier extent in 2022–2024 because of ash", "Yes, reasonable (IDEAM 2024: 7.17 km², 88 % under ash)"],
+    ["Loss since the 1980s is ~62 % (IDEAM) / ~75 % (MapBiomas)", "Yes, citing each source"],
     ["The 0 °C isotherm rose X m (measured)", "No: it is an estimate"],
     ["Machine learning detects ice under ash", "No: it does not generalise beyond the known geometry"],
-    ["IDEAM figure", "Do not cite until read in the original document"],
+    ["Ash hides the glacier (confirmed by IDEAM)", "Yes"],
 ], [12, 4])
 
 # =============================== 15. NEXT STEPS ===============================
-h1("15. Next steps")
+h1("16. Next steps")
 bullets([
     "<b>Author review</b> of the outlines in QGIS (edit 2021 and 2023; confirm confidence levels).",
     "<b>Machine learning v2 for ice under ash:</b> Sentinel-1 radar, multi-temporal features, independent labels for covered ice, and a transfer "
@@ -405,11 +436,11 @@ bullets([
     "<b>Densify 2017–2026</b> with 10 m Sentinel-2 outlines on dates without ash or fresh snow.",
     "<b>Páramo:</b> NDVI by 100 m elevation bands.",
     "<b>Hydrology:</b> MapBiomas Water and IDEAM river discharge (DHIME).",
-    "<b>Pending checks:</b> MapBiomas licence, IDEAM figures in the original PDF, literature references.",
+    "<b>Pending checks:</b> MapBiomas licence and literature references.",
 ])
 
 # =============================== 16. REPRODUCIBILITY ===============================
-h1("16. Reproducibility")
+h1("17. Reproducibility")
 p("Environment: Google Earth Engine (Code Editor, JavaScript); QGIS 4.0.2 with Python 3.12 (GDAL, NumPy, pandas, SciPy, Matplotlib, Pillow, "
   "ReportLab) plus scikit-learn 1.9 and XGBoost 3.4 installed in <i>.pylibs/</i>; Windows 11. Python scripts run with:")
 S.append(Paragraph('"C:\\Program Files\\QGIS 4.0.2\\bin\\python-qgis.bat" nevados\\python\\&lt;script&gt;.py', st["code"]))
@@ -426,11 +457,12 @@ tabla([
     ["8", "gee/07_descargas_ml_termico.js", "Landsat 8/9 scene IDs", "GeoTIFF links with thermal → data/raw/ml/"],
     ["9", "python/ml_hielo_bajo_ceniza.py", "data/raw/ml/; outlines", "Metrics, importance, ML figure"],
     ["10", "python/piezas_comunicacion.py", "Outlines and figures", "Timelapse, carousel, before/after"],
-    ["11", "python/informe_metodologia.py · python/methodology_report_en.py", "All of the above", "Spanish and English reports"],
+    ["11", "python/comparacion_ideam.py", "IDEAM and MapBiomas series", "Comparison table and figure"],
+    ["12", "python/informe_metodologia.py · python/methodology_report_en.py", "All of the above", "Spanish and English reports"],
 ], [1.3, 6.2, 4.2, 4.5])
 
 # =============================== 17. REFERENCES ===============================
-h1("17. Sources and references")
+h1("18. Sources and references")
 p("<b>Data sources and documentation consulted online during the project:</b>")
 bullets([
     "MapBiomas Colombia — Legend codes, Collection 3: colombia.mapbiomas.org/wp-content/uploads/sites/3/2025/10/Codigo-de-la-Leyenda-coleccion-3.pdf",
@@ -440,6 +472,8 @@ bullets([
     "RGI 7.0 — User guide (CC BY 4.0 licence): glims.org/rgi_user_guide/welcome.html",
     "NOAA CPC — Oceanic Niño Index: cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
     "Colombian Ministry of Environment — \"Colombia is losing its glaciers: only 33 km² remain\" (national context).",
+    "IDEAM (2023). Informe del estado de los glaciares colombianos 2023 (Table 17). ideam.gov.co",
+    "IDEAM (2025). Informe del estado de los glaciares colombianos 2024 (Table 1). ideam.gov.co",
 ])
 p("<b>Methodological literature (cited from memory; verify before formal publication):</b>")
 bullets([
