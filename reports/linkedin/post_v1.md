@@ -30,6 +30,8 @@ Siguiente paso: Machine Learning para mapear el hielo bajo la ceniza, comparado 
 
 Datos 100 % abiertos: MapBiomas Colombia, USGS Landsat, Copernicus Sentinel-2 y ERA5-Land, CHIRPS, NOAA.
 
+🔗 Código, datos procesados e informe metodológico completo: https://github.com/pastranacristian18-commits/nevado-del-ruiz-glaciar
+
 ¿Trabajas con glaciares, volcanes o teledetección en los Andes? Me encantaría conocer tu opinión sobre el método.
 
 #Teledetección #GoogleEarthEngine #QGIS #Glaciares #CambioClimático #Colombia #DatosAbiertos #SIG #MapBiomas
@@ -41,4 +43,4 @@ Datos 100 % abiertos: MapBiomas Colombia, USGS Landsat, Copernicus Sentinel-2 y 
 - [ ] Confirmar que estás cómodo con cada cifra (todas vienen de `validation/`).
 - [ ] No citar la cifra del IDEAM hasta leerla en el PDF original.
 - [ ] Verificar la licencia de MapBiomas Colombia antes de reutilizar sus mapas en imágenes.
-- [ ] Subir el repositorio a GitHub y añadir el enlace (opcional para v1).
+- [x] Repositorio en GitHub enlazado.
