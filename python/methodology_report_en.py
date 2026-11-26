@@ -85,7 +85,7 @@ def pie_pagina(canv, doc):
 S += [Spacer(1, 4 * cm), Paragraph("Nevado del Ruiz:<br/>40 Years of Glacier, Volcanic Ash and Climate", st["t"]), Spacer(1, 0.6 * cm),
       Paragraph("Detailed methodology report — what was done, how, what failed, and what can be claimed", st["st"]), Spacer(1, 1.2 * cm)]
 figura(FIG / "before_after_2003_2024_en.png", 16, "Glacier outline in 2003 (white) and 2024 (red) over Landsat 7/8 false colour.")
-S += [Spacer(1, 1 * cm), Paragraph("ANTARES Geospatial Lab · Project #1 Nevados<br/>Author: Cristhian Pastrana<br/>"
+S += [Spacer(1, 1 * cm), Paragraph("ANTARES Geospatial Lab · Project #1 Nevados<br/>Author: Cristian Pastrana<br/>"
                                     "Version 1 · November 2026 · Maturity level: N1 (100 % open data)", st["st"]), PageBreak()]
 
 # =============================== 1. SUMMARY ===============================
@@ -451,6 +451,6 @@ bullets([
 ])
 
 doc = SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=2 * cm, rightMargin=2 * cm, topMargin=1.8 * cm, bottomMargin=2 * cm,
-                        title="Nevado del Ruiz — Methodology report", author="Cristhian Pastrana")
+                        title="Nevado del Ruiz — Methodology report", author="Cristian Pastrana")
 doc.build(S, onFirstPage=pie_pagina, onLaterPages=pie_pagina)
 print("PDF:", OUT)

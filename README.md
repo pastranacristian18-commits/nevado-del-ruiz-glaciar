@@ -6,7 +6,7 @@
 > **Main metric:** glacier area (km²) with a sensitivity range, cross-checked across data sources and sensors.
 > **Main limitation:** volcanic ash hides the glacier in the dry season, and fresh snow inflates it in the wet season.
 
-Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial projects built on open data · Author: **Cristhian Pastrana**, Agricultural Engineer.
+Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial projects built on open data · Author: **Cristian Pastrana**, Agricultural Engineer.
 
 ![Glacier outline 2003 vs 2024](reports/figuras/before_after_2003_2024_en.png)
 

@@ -6,7 +6,7 @@
 > **Métrica principal:** área glaciar (km²) con rango de sensibilidad, contrastada entre fuentes y sensores.
 > **Limitación principal:** la ceniza volcánica oculta el glaciar en temporada seca y la nieve fresca lo infla en temporada húmeda.
 
-Proyecto #1 de **ANTARES Geospatial Lab**, portafolio de proyectos geoespaciales reproducibles con datos abiertos · Autor: **Cristhian Pastrana**, Ingeniero Agrícola.
+Proyecto #1 de **ANTARES Geospatial Lab**, portafolio de proyectos geoespaciales reproducibles con datos abiertos · Autor: **Cristian Pastrana**, Ingeniero Agrícola.
 
 ![Borde del glaciar 2003 vs 2024](reports/linkedin/antes_despues_2003_2024.png)
 

@@ -92,7 +92,7 @@ S += [Spacer(1, 4 * cm), Paragraph("Nevado del Ruiz:<br/>40 años de glaciar, ce
       Paragraph("Informe metodológico detallado — qué se hizo, cómo, qué falló y qué se puede afirmar", st["st"]),
       Spacer(1, 1.2 * cm)]
 figura(LI / "antes_despues_2003_2024.png", 16, "Borde del glaciar en 2003 (blanco) y 2024 (rojo) sobre Landsat 7/8 en falso color.")
-S += [Spacer(1, 1 * cm), Paragraph("ANTARES Geospatial Lab · Proyecto #1 Nevados<br/>Autor: Cristhian Pastrana<br/>"
+S += [Spacer(1, 1 * cm), Paragraph("ANTARES Geospatial Lab · Proyecto #1 Nevados<br/>Autor: Cristian Pastrana<br/>"
                                     "Versión 1 · 25 de noviembre de 2026 · Nivel de madurez: N1 (100 % datos abiertos)", st["st"]),
       PageBreak()]
 
