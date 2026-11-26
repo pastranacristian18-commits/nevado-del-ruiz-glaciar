@@ -65,7 +65,8 @@ Los datos crudos (`data/raw/`) no se versionan: se regeneran con `gee/04_descarg
 | Serie MapBiomas + auditoría con contornos propios | Hecho (contornos semiautomáticos, pendiente revisión manual) |
 | Sentinel-2 + Cloud Score+ | Hecho |
 | Clima y El Niño | Hecho (exploratorio) |
-| Machine Learning para hielo bajo ceniza | Próximo |
+| Machine Learning para hielo bajo ceniza (v1) | Hecho: resultado negativo documentado — el ML parece funcionar (F1 0,88) pero se cae al dejar un sector fuera (F1 ≈ 0,25, igual que NDSI). Ver [`validation/ml_hielo_bajo_ceniza.md`](validation/ml_hielo_bajo_ceniza.md) |
+| ML v2: Sentinel-1 radar, etiquetas independientes, transferencia a otro glaciar | Próximo |
 | Páramo por franjas altitudinales · transferencia a Santa Isabel, Tolima y El Cocuy | Pendiente |
 
 ## Datos y licencias

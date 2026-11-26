@@ -1,0 +1,11 @@
+modelo,vars,F1,IoU,err_area_pct
+Logística,S,0.164,0.090,87.195
+Logística,ST,0.167,0.092,93.587
+Logística,STT,0.337,0.207,-17.305
+NDSI_0.40,-,0.246,0.143,-86.125
+RandomForest,S,0.257,0.149,-8.985
+RandomForest,ST,0.231,0.132,10.857
+RandomForest,STT,0.274,0.161,-27.689
+XGBoost,S,0.247,0.142,-14.499
+XGBoost,ST,0.211,0.119,3.059
+XGBoost,STT,0.264,0.155,-31.955

@@ -115,7 +115,8 @@ box("<b>Resultados principales.</b> (a) MapBiomas registra 14,73 km² de glaciar
     "(d) En temporada seca el hielo visible cae a ~0,5–1,5 km² y meses después vuelve a ~3–4 km²: es ceniza, no pérdida. "
     "(e) La temperatura de la celda ERA5-Land sube +0,10 °C por década (p = 0,005); El Niño hace al Ruiz más cálido "
     "(ρ = +0,54) y más seco (ρ = −0,53). (f) La relación directa El Niño → pérdida de hielo es sugestiva (ρ = −0,30; p = 0,06) "
-    "pero <b>no</b> concluyente.")
+    "pero <b>no</b> concluyente. (g) Un modelo de Machine Learning para detectar hielo bajo ceniza alcanzó F1 = 0,88 "
+    "dejando una escena fuera, pero cayó a ≈ 0,25 (igual que el NDSI) dejando un sector fuera: el acierto aparente era fuga de información espacial.")
 
 # =============================== 2. PREGUNTA Y ÁREA ===============================
 h1("2. Pregunta de investigación y área de estudio")
@@ -323,8 +324,48 @@ p("<b>Por qué la señal glaciar es débil:</b> (a) MapBiomas está suavizado te
   "(d) una celda de 9 km no representa la cumbre, por eso se usan anomalías y tendencias.")
 p("<b>Contexto actual:</b> el ONI de agosto–octubre de 2026 es +2,46 (El Niño fuerte en curso según NOAA).")
 
+# =============================== 11. ML ===============================
+h1("11. Fase 7 — Machine Learning: ¿hielo bajo ceniza?")
+p("<b>Pregunta.</b> ¿Pueden modelos de Machine Learning con variables espectrales, térmicas y topográficas detectar el glaciar "
+  "cuando está cubierto de ceniza, donde el NDSI falla?")
+p("<b>Datos.</b> Nueve escenas Landsat 8/9 descargadas con <i>gee/07_descargas_ml_termico.js</i>: seis bandas de reflectancia de "
+  "superficie y la temperatura de brillo de la banda térmica B10 (100 m nativos, entregada a 30 m). Cinco escenas con ceniza "
+  "(2020-01, 2023-12, 2024-01, 2025-01 ×2) y cuatro limpias (2017-12, 2023-06, 2024-08, 2026-07). La hipótesis física: el hielo bajo "
+  "ceniza se mantiene cerca de 0 °C, mientras la roca se calienta.")
+p("<b>Etiquetas.</b> Contorno semiautomático de la escena limpia: el propio para escenas limpias y el de 2024-08-15 para las escenas "
+  "con ceniza (5–8 meses de diferencia). Se excluyó una franja de 60 m a cada lado del borde. La escena de 2020 no tiene contorno "
+  "cercano y solo se usó para aplicar el modelo.")
+p("<b>Variables.</b> S = espectral (seis bandas, NDSI, NDWI, cociente rojo/SWIR1, brillo, textura NIR); ST = S + anomalía térmica "
+  "(B10 menos la mediana de la escena); STT = ST + cota, pendiente y orientación. <b>Modelos:</b> NDSI > 0,40 (línea base), "
+  "regresión logística, Random Forest (200 árboles) y XGBoost (300 árboles), con muestreo balanceado de 8000 píxeles por escena y semilla fija.")
+p("<b>Validación.</b> (A) Dejar una escena fuera. (B) Dejar un sector fuera: el área se dividió en cuatro cuadrantes alrededor de la "
+  "cumbre (con 300 m de margen); cada cuadrante se predijo con un modelo que nunca lo vio en ninguna escena, y las cuatro predicciones "
+  "se unieron en un mapa completo para evaluarlo. Una primera versión promediaba el F1 por sector y quedaba sesgada porque los sectores "
+  "norte y oeste casi no tienen hielo en 2024; se corrigió.")
+tabla([
+    ["Modelo", "Variables", "F1 (A: escena fuera)", "F1 (B: sector fuera)", "Error de área (B)"],
+    ["NDSI > 0,40", "—", "0,28", "0,25", "−86 %"],
+    ["XGBoost", "S", "0,60", "0,25", "−14 %"],
+    ["XGBoost", "ST", "0,61", "0,21", "+3 %"],
+    ["XGBoost", "STT", "0,88", "0,26", "−32 %"],
+    ["Random Forest", "STT", "0,85", "0,27", "−28 %"],
+    ["Regresión logística", "STT", "0,74", "0,34", "−17 %"],
+], [3.4, 2.0, 3.6, 3.6, 3.4])
+p("<b>Importancia por permutación</b> (Random Forest STT, prueba en 2024-01-04, caída del F1): cota 0,29; anomalía térmica 0,065; "
+  "rojo/SWIR1 0,063; pendiente 0,04; el resto ≈ 0.")
+figura(FIG / "ml_hielo_bajo_ceniza.png", 16.5, "Figura 5. Escenas con ceniza: imagen, línea base NDSI, XGBoost con térmico y topografía "
+       "(validación dejando la escena fuera) y XGBoost con térmico (validación dejando el sector fuera). Rojo: contorno de referencia; cian: predicción.")
+box("<b>Interpretación.</b> El F1 de 0,88 es en gran parte <b>fuga de información espacial</b>: todas las escenas con ceniza comparten "
+    "la misma referencia y la variable más importante es la cota, así que el modelo aprende <i>dónde</i> está el glaciar y no <i>cómo</i> "
+    "se ve el hielo bajo ceniza. Cuando el sector no se vio en el entrenamiento, todos los modelos caen a F1 ≈ 0,2–0,3, al nivel de la línea "
+    "base: aciertan mejor el área total, pero ubican el hielo en sitios equivocados. El térmico aporta poco. <b>Con estos datos, el ML no "
+    "resuelve el problema de forma generalizable.</b> La aplicación a 2020-01-09 (modelos 5,7–7,0 km² frente a 2,79 km² del NDSI y 6,32 km² "
+    "de MapBiomas) no se considera una estimación confiable.", "warn")
+p("<b>Siguiente iteración:</b> etiquetas independientes del hielo cubierto (alta resolución o campo), radar Sentinel-1, variables "
+  "multitemporales (cambio respecto a la última escena limpia) y prueba de transferencia a otro glaciar (Santa Isabel, Tolima).")
+
 # =============================== 11. FALLOS ===============================
-h1("11. Registro completo de lo que falló")
+h1("12. Registro completo de lo que falló")
 tabla([
     ["#", "Qué falló", "Causa", "Cómo se resolvió / estado"],
     ["1", "Serie v1 imposible (percentil 25)", "Fmask borra el hielo; percentil escoge fechas sucias", "Descartada y documentada"],
@@ -339,10 +380,13 @@ tabla([
     ["10", "Copiado automático de scripts al Code Editor", "El navegador no compartía el portapapeles", "Pegado manual (Ctrl+V)"],
     ["11", "Error en Python (objeto GDAL liberado)", "Dataset temporal recolectado por el recolector de basura", "Referencia explícita al dataset"],
     ["12", "Descarga directa de CSV desde el navegador", "Bloqueada por el entorno", "Agregación anual extraída como texto"],
+    ["13", "ML con F1 = 0,88 que no generaliza", "Fuga espacial: misma referencia y la cota como variable dominante", "Detectado con validación por sectores; documentado"],
+    ["14", "Validación por sectores v1 sesgada", "Promedio de F1 por sector con sectores casi sin hielo", "Predicciones fuera-de-sector unidas y evaluadas juntas"],
+    ["15", "Importancia de variables: proceso paralelo caído", "Los procesos hijos no encontraban las librerías locales", "Cálculo en un solo proceso"],
 ], [0.9, 4.2, 5.1, 5.6])
 
 # =============================== 12. LIMITACIONES ===============================
-h1("12. Limitaciones e incertidumbre")
+h1("13. Limitaciones e incertidumbre")
 bullets([
     "La incertidumbre dominante es la <b>superficie del glaciar</b> (ceniza y nieve fresca), no el sensor ni el píxel.",
     "Contornos semiautomáticos con una sola revisión visual preliminar; falta revisión detallada del autor y un segundo intérprete.",
@@ -352,11 +396,11 @@ bullets([
     "ERA5-Land a ~9 km; isoterma estimada con gradiente fijo; precipitación de ERA5 no confiable aquí.",
     "Estadística exploratoria: n pequeño y autocorrelación; correlación no implica causalidad.",
     "No hay datos de campo (Nivel 2): ninguna cifra está calibrada con mediciones in situ.",
-    "Las referencias bibliográficas de la Sección 16 se citan de memoria y deben verificarse antes de publicar formalmente.",
+    "Las referencias bibliográficas de la Sección 17 se citan de memoria y deben verificarse antes de publicar formalmente.",
 ])
 
 # =============================== 13. AFIRMACIONES ===============================
-h1("13. Qué se puede afirmar y qué no")
+h1("14. Qué se puede afirmar y qué no")
 tabla([
     ["Afirmación", "Estado"],
     ["El Ruiz perdió ~75 % de su superficie glaciar entre 1985 y 2024 según MapBiomas Colombia", "Sí (citando la fuente)"],
@@ -368,15 +412,16 @@ tabla([
     ["El Niño acelera la pérdida de hielo", "No demostrado (sugestivo)"],
     ["MapBiomas se equivoca en 2023", "No"],
     ["La isoterma de 0 °C subió X m (medido)", "No: es una estimación"],
+    ["El ML detecta hielo bajo ceniza", "No: no generaliza fuera de la geometría conocida"],
     ["Cifra del IDEAM", "No citar hasta leer el documento original"],
 ], [12, 4])
 
 # =============================== 14. PRÓXIMOS ===============================
-h1("14. Próximos pasos")
+h1("15. Próximos pasos")
 bullets([
     "<b>Revisión del autor</b> de los contornos en QGIS (editar 2021 y 2023; confirmar confianza).",
-    "<b>Machine Learning para hielo bajo ceniza:</b> Random Forest / XGBoost con bandas, NDSI, textura y topografía, comparado con la "
-    "línea base NDSI; validación dejando una fecha fuera y dejando un glaciar fuera (Santa Isabel, Tolima).",
+    "<b>Machine Learning v2 para hielo bajo ceniza:</b> radar Sentinel-1, variables multitemporales, etiquetas independientes "
+    "del hielo cubierto y prueba de transferencia a otro glaciar (Santa Isabel, Tolima).",
     "<b>Densificar 2017–2026</b> con Sentinel-2 a 10 m y contornos en fechas sin ceniza ni nieve fresca.",
     "<b>Páramo:</b> NDVI por franjas de altitud de 100 m.",
     "<b>Hidrología:</b> MapBiomas Agua y caudales del IDEAM (DHIME).",
@@ -385,7 +430,7 @@ bullets([
 ])
 
 # =============================== 15. REPRODUCIBILIDAD ===============================
-h1("15. Reproducibilidad")
+h1("16. Reproducibilidad")
 p("Entorno: Google Earth Engine (Code Editor, JavaScript); QGIS 4.0.2 con Python 3.12 (GDAL, NumPy, pandas, SciPy, Matplotlib, "
   "Pillow, ReportLab); Windows 11. Todos los scripts están en la carpeta del proyecto; los scripts de Python se ejecutan con:")
 S.append(Paragraph('"C:\\Program Files\\QGIS 4.0.2\\bin\\python-qgis.bat" nevados\\python\\&lt;script&gt;.py', st["code"]))
@@ -399,11 +444,13 @@ tabla([
     ["6", "gee/06_clima_mensual.js + data/raw/clima/oni_noaa_cpc.txt", "Assets GEE; NOAA", "Clima anual"],
     ["7", "python/analisis_clima_glaciar.py", "CSV procesados", "Figura y estadísticas"],
     ["8", "python/piezas_comunicacion.py", "Contornos y figuras", "Timelapse, carrusel"],
-    ["9", "python/informe_metodologia.py", "Todo lo anterior", "Este informe"],
+    ["9", "gee/07_descargas_ml_termico.js", "IDs de escenas Landsat 8/9", "Enlaces GeoTIFF con térmico → data/raw/ml/"],
+    ["10", "python/ml_hielo_bajo_ceniza.py", "data/raw/ml/; contornos", "Métricas, importancia, figura ML"],
+    ["11", "python/informe_metodologia.py", "Todo lo anterior", "Este informe"],
 ], [1.3, 6.2, 4.2, 4.5])
 
 # =============================== 16. REFERENCIAS ===============================
-h1("16. Fuentes y referencias")
+h1("17. Fuentes y referencias")
 p("<b>Fuentes de datos y documentación consultadas en línea durante el proyecto:</b>")
 bullets([
     "MapBiomas Colombia — Código de la leyenda, Colección 3: colombia.mapbiomas.org/wp-content/uploads/sites/3/2025/10/Codigo-de-la-Leyenda-coleccion-3.pdf",

@@ -17,3 +17,6 @@ __pycache__/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Librerias ML instaladas localmente para el Python de QGIS
+.pylibs/
