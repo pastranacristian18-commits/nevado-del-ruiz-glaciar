@@ -23,6 +23,9 @@ RAW, P = R / "data" / "raw", R / "data" / "processed"
 OUT = R / "reports" / "linkedin"; OUT.mkdir(parents=True, exist_ok=True)
 CX, CY = None, None
 AZUL, NAR, GRIS = "#2c7fb8", "#d95f0e", "#444444"
+import os
+EN = os.environ.get("ANTARES_LANG") == "en"
+T = lambda es, en: en if EN else es
 
 # ---------- contornos ----------
 ds = ogr.Open(str(R / "qgis" / "contornos_semiauto.gpkg"))
@@ -72,7 +75,7 @@ def panel(ax, fecha, nota="", ref_dash=True, titulo=True, fs=11):
     if titulo:
         ax.text(0.03, 0.97, fecha[:4], transform=ax.transAxes, va="top", color="white",
                 fontsize=fs + 10, fontweight="bold")
-        coma = lambda v: f"{v:.2f}".replace(".", ",")
+        coma = lambda v: f"{v:.2f}" if EN else f"{v:.2f}".replace(".", ",")
         ax.text(0.03, 0.85, f"{coma(c['area'])} km²  ({coma(c['lo'])}–{coma(c['hi'])})", transform=ax.transAxes,
                 va="top", color="white", fontsize=fs + 1)
         ax.text(0.03, 0.03, f"{sensor.replace('LT05','Landsat 5').replace('LE07','Landsat 7').replace('LC08','Landsat 8').replace('LC09','Landsat 9')} · {fecha}",
@@ -86,6 +89,8 @@ def panel(ax, fecha, nota="", ref_dash=True, titulo=True, fs=11):
 
 
 # ---------- GIF ----------
+if EN:
+    FRAMES = []
 imgs = []
 for fecha, nota in FRAMES:
     fig, ax = plt.subplots(figsize=(5.4, 5.4), dpi=120)
@@ -96,17 +101,21 @@ for fecha, nota in FRAMES:
     fig.canvas.draw()
     imgs.append(Image.fromarray(np.asarray(fig.canvas.buffer_rgba())[:, :, :3]))
     plt.close(fig)
-dur = [1400] * (len(imgs) - 1) + [3000]
-imgs[0].save(OUT / "timelapse_ruiz.gif", save_all=True, append_images=imgs[1:], duration=dur, loop=0)
+if not EN:
+    dur = [1400] * (len(imgs) - 1) + [3000]
+    imgs[0].save(OUT / "timelapse_ruiz.gif", save_all=True, append_images=imgs[1:], duration=dur, loop=0)
 
 # ---------- Antes / después ----------
 fig, axs = plt.subplots(1, 2, figsize=(10, 5.4), dpi=160)
 panel(axs[0], "2003-01-02", fs=12); panel(axs[1], "2024-08-15", fs=12)
-fig.suptitle("Nevado del Ruiz: borde del glaciar en 2003 (blanco) y 2024 (rojo)", fontsize=13, fontweight="bold", y=0.99)
-fig.text(0.5, 0.01, "Landsat 7/8, falso color SWIR1-NIR-Verde (hielo = cian). Contornos semiautomáticos NDSI > 0,40 revisados visualmente; "
-         "rango = umbrales 0,3–0,5. ANTARES Geospatial Lab", ha="center", fontsize=7, color=GRIS)
+fig.suptitle(T("Nevado del Ruiz: borde del glaciar en 2003 (blanco) y 2024 (rojo)", "Nevado del Ruiz: glacier outline in 2003 (white) and 2024 (red)"), fontsize=13, fontweight="bold", y=0.99)
+fig.text(0.5, 0.01, T("Landsat 7/8, falso color SWIR1-NIR-Verde (hielo = cian). Contornos semiautomáticos NDSI > 0,40 revisados visualmente; "
+         "rango = umbrales 0,3–0,5. ANTARES Geospatial Lab", "Landsat 7/8, false colour SWIR1-NIR-Green (ice = cyan). Semi-automatic NDSI > 0.40 outlines, visually reviewed; "
+         "range = thresholds 0.3–0.5. ANTARES Geospatial Lab"), ha="center", fontsize=7, color=GRIS)
 fig.subplots_adjust(0.01, 0.05, 0.99, 0.93, wspace=0.02)
-fig.savefig(OUT / "antes_despues_2003_2024.png"); plt.close(fig)
+fig.savefig((R / "reports" / "figuras" / "before_after_2003_2024_en.png") if EN else (OUT / "antes_despues_2003_2024.png")); plt.close(fig)
+if EN:
+    print("EN listo"); raise SystemExit
 
 # ---------- Carrusel (PDF 4:5) ----------
 mb = pd.read_csv(P / "serie_mapbiomas_c3_ruiz.csv")

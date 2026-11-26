@@ -34,6 +34,9 @@ R = Path(__file__).resolve().parents[1]
 P, RAW = R / "data" / "processed", R / "data" / "raw"
 FIG = R / "reports" / "figuras"
 GRAD = 0.0065  # °C/m
+import os
+EN = os.environ.get("ANTARES_LANG") == "en"
+T = lambda es, en: en if EN else es
 
 # ---------------- Datos ----------------
 mb = pd.read_csv(P / "serie_mapbiomas_c3_ruiz.csv")
@@ -107,7 +110,8 @@ lineas += ["", "CAUTELAS: n≈40 y autocorrelación → p-valores optimistas; Ma
            "ERA5-Land ~9 km (usar anomalías); isoterma 0 °C estimada por gradiente fijo 6,5 °C/km; exploratorio."]
 txt = "\n".join(lineas)
 print(txt)
-(R / "validation" / "resultados_clima.txt").write_text(txt, encoding="utf-8")
+if not EN:
+    (R / "validation" / "resultados_clima.txt").write_text(txt, encoding="utf-8")
 
 # ---------------- Figura ----------------
 propios = pd.DataFrame({  # contornos de confianza alta (validation/auditoria_mapbiomas_v1.md)
@@ -119,40 +123,39 @@ fig, ax = plt.subplots(4, 1, figsize=(8, 9.5), sharex=True,
                        gridspec_kw={"height_ratios": [2.2, 1, 1.2, 1]})
 x = df["anio"]
 
-ax[0].plot(mb["anio"], mb["area_km2_mapbiomas"], "-o", ms=3, color="#2c7fb8", label="MapBiomas Col. 3 (anual)")
+ax[0].plot(mb["anio"], mb["area_km2_mapbiomas"], "-o", ms=3, color="#2c7fb8", label=T("MapBiomas Col. 3 (anual)", "MapBiomas Col. 3 (annual)"))
 ax[0].errorbar(propios["t"], propios["a"], yerr=[propios["a"] - propios["lo"], propios["hi"] - propios["a"]],
-               fmt="s", color="#d95f0e", ms=5, capsize=3, label="Este estudio: escenas limpias (rango NDSI 0,3–0,5)")
+               fmt="s", color="#d95f0e", ms=5, capsize=3, label=T("Este estudio: escenas limpias (rango NDSI 0,3–0,5)", "This study: clean scenes (NDSI range 0.3–0.5)"))
 for yr in x[nino]:
     ax[0].axvspan(yr - 0.5, yr + 0.5, color="#de2d26", alpha=0.08, lw=0)
-ax[0].set_ylabel("Área glaciar (km²)")
-ax[0].set_title("Nevado del Ruiz: glaciar, temperatura y El Niño (1981–2026)", loc="left", fontweight="bold")
+ax[0].set_ylabel(T("Área glaciar (km²)", "Glacier area (km²)"))
+ax[0].set_title(T("Nevado del Ruiz: glaciar, temperatura y El Niño (1981–2026)", "Nevado del Ruiz: glacier, temperature and El Niño (1981–2026)"), loc="left", fontweight="bold")
 ax[0].legend(frameon=False, loc="upper right")
-ax[0].text(0.01, 0.04, "Franjas rojas: años El Niño (ONI anual ≥ 0,5)", transform=ax[0].transAxes, fontsize=7.5, color="#a50f15")
+ax[0].text(0.01, 0.04, T("Franjas rojas: años El Niño (ONI anual ≥ 0,5)", "Red bands: El Niño years (annual ONI ≥ 0.5)"), transform=ax[0].transAxes, fontsize=7.5, color="#a50f15")
 
 col = np.where(df["oni"] >= 0, "#de2d26", "#3182bd")
 ax[1].bar(x, df["oni"], color=col, width=0.8)
 ax[1].axhline(0, color="k", lw=0.5)
-ax[1].set_ylabel("ONI anual (°C)")
+ax[1].set_ylabel(T("ONI anual (°C)", "Annual ONI (°C)"))
 
 ax[2].plot(x, df["t2m_c"], color="#e6550d", lw=1.2)
 sen = stats.theilslopes(df["t2m_c"], x)
 ax[2].plot(x, sen.intercept + sen.slope * x, "--", color="#e6550d", lw=1)
-ax[2].set_ylabel("T 2 m ERA5-Land (°C)\n(celda ~9 km)")
+ax[2].set_ylabel(T("T 2 m ERA5-Land (°C)\n(celda ~9 km)", "2 m T ERA5-Land (°C)\n(~9 km cell)"))
 a2 = ax[2].twinx(); a2.spines["right"].set_visible(True)
 lo, hi = ax[2].get_ylim()   # misma curva: la isoterma es una transformación lineal de T
 a2.set_ylim(z_celda + lo / GRAD, z_celda + hi / GRAD)
-a2.set_ylabel("Isoterma 0 °C estimada (m)", color="#636363")
-ax[2].text(0.01, 0.06, f"Tendencia {sen.slope*10:+.2f} °C/década ≈ {sen.slope*10/GRAD:+.0f} m/década de la isoterma 0 °C",
+a2.set_ylabel(T("Isoterma 0 °C estimada (m)", "Estimated 0 °C isotherm (m)"), color="#636363")
+ax[2].text(0.01, 0.06, T(f"Tendencia {sen.slope*10:+.2f} °C/década ≈ {sen.slope*10/GRAD:+.0f} m/década de la isoterma 0 °C", f"Trend {sen.slope*10:+.2f} °C/decade ≈ {sen.slope*10/GRAD:+.0f} m/decade of the 0 °C isotherm"),
            transform=ax[2].transAxes, fontsize=7.5, color="#a63603")
 
 ax[3].bar(x, df["chirps_anom_pct"], color=np.where(df["chirps_anom_pct"] >= 0, "#41ab5d", "#a6611a"), width=0.8)
 ax[3].axhline(0, color="k", lw=0.5)
-ax[3].set_ylabel("Precip. CHIRPS\n(anomalía %)")
-ax[3].set_xlabel("Año")
+ax[3].set_ylabel(T("Precip. CHIRPS\n(anomalía %)", "CHIRPS precip.\n(anomaly %)"))
+ax[3].set_xlabel(T("Año", "Year"))
 
-fig.text(0.01, 0.012, "Fuentes: MapBiomas Colombia Col. 3; Landsat 5–9 (USGS); ERA5-Land (Copernicus/ECMWF); CHIRPS (UCSB-CHC); ONI (NOAA CPC).\n"
-         "ANTARES Geospatial Lab · análisis exploratorio.", fontsize=6.5, color="#555")
+fig.text(0.01, 0.012, T("Fuentes: MapBiomas Colombia Col. 3; Landsat 5–9 (USGS); ERA5-Land (Copernicus/ECMWF); CHIRPS (UCSB-CHC); ONI (NOAA CPC).\nANTARES Geospatial Lab · análisis exploratorio.", "Sources: MapBiomas Colombia Col. 3; Landsat 5–9 (USGS); ERA5-Land (Copernicus/ECMWF); CHIRPS (UCSB-CHC); ONI (NOAA CPC).\nANTARES Geospatial Lab · exploratory analysis."), fontsize=6.5, color="#555")
 fig.tight_layout(rect=(0, 0.035, 1, 1))
-out = FIG / "glaciar_clima_el_nino.png"
+out = FIG / ("glacier_climate_el_nino_en.png" if EN else "glaciar_clima_el_nino.png")
 fig.savefig(out, dpi=200)
 print("Figura:", out)

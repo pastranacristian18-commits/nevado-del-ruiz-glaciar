@@ -1,78 +1,81 @@
-# Nevado del Ruiz: 40 años de glaciar, ceniza y clima (1985–2026)
+# Nevado del Ruiz: 40 Years of Glacier, Volcanic Ash and Climate (1985–2026)
+> 🇪🇸 [Versión en español](README.es.md)
 
-> **Pregunta:** ¿Cuánta superficie glaciar ha perdido el Volcán Nevado del Ruiz desde 1985, con qué incertidumbre, y qué relación tiene con la temperatura y El Niño?
-> **Usuarios potenciales:** IDEAM, Parques Nacionales, corporaciones autónomas regionales, academia.
-> **Métrica principal:** área glaciar (km²) con rango de sensibilidad, contrastada entre fuentes y sensores.
-> **Limitación principal:** la ceniza volcánica oculta el glaciar en temporada seca y la nieve fresca lo infla en temporada húmeda.
+> **Question:** How much glacier area has Nevado del Ruiz volcano (Colombia) lost since 1985, with what uncertainty, and how does that loss relate to temperature and El Niño?
+> **Potential users:** national hydro-meteorological agencies (IDEAM), protected-area managers, regional environmental authorities, researchers.
+> **Main metric:** glacier area (km²) with a sensitivity range, cross-checked across data sources and sensors.
+> **Main limitation:** volcanic ash hides the glacier in the dry season, and fresh snow inflates it in the wet season.
 
-Proyecto #1 de **ANTARES Geospatial Lab**, portafolio de proyectos geoespaciales reproducibles con datos abiertos · Autor: **Cristhian Pastrana**, Ingeniero Agrícola.
+Project #1 of **ANTARES Geospatial Lab**, a portfolio of reproducible geospatial projects built on open data · Author: **Cristhian Pastrana**, Agricultural Engineer.
 
-![Borde del glaciar 2003 vs 2024](reports/linkedin/antes_despues_2003_2024.png)
+![Glacier outline 2003 vs 2024](reports/figuras/before_after_2003_2024_en.png)
 
-## Resultados principales
+## Key findings
 
-| Hallazgo | Evidencia |
+| Finding | Evidence |
 |---|---|
-| El Ruiz perdió ~75 % de su superficie glaciar entre 1985 y 2024 | MapBiomas Colombia Col. 3: 14,73 → 3,68 km² |
-| Escenas limpias independientes confirman la tendencia | Contornos Landsat: 10,71 km² (2003) → 4,35 km² (2024) |
-| Sentinel-2 y Landsat coinciden el mismo día | Diferencias de 2–4 % |
-| **La ceniza esconde el glaciar** | En temporada seca el hielo visible cae a ~0,5–1,5 km² y meses después vuelve a ~3–4 km² |
-| La región se calienta | ERA5-Land: +0,10 °C/década (p = 0,005) |
-| El Niño hace al Ruiz más cálido y seco | ρ = +0,54 con temperatura; ρ = −0,53 con lluvia (CHIRPS) |
-| ¿El Niño acelera la pérdida de hielo? | Sugestivo (ρ = −0,30; p = 0,06), **no demostrado** |
+| Ruiz lost ~75 % of its glacier area between 1985 and 2024 | MapBiomas Colombia Collection 3: 14.73 → 3.68 km² |
+| Independent clean scenes confirm the trend | Landsat outlines: 10.71 km² (2003) → 4.35 km² (2024) |
+| Sentinel-2 and Landsat agree on the same day | 2–4 % difference |
+| **Volcanic ash hides the glacier** | In the dry season visible ice drops to ~0.5–1.5 km², then returns to ~3–4 km² months later |
+| The region is warming | ERA5-Land: +0.10 °C/decade (p = 0.005) |
+| El Niño makes Ruiz warmer and drier | ρ = +0.54 with temperature; ρ = −0.53 with rainfall (CHIRPS) |
+| Does El Niño accelerate ice loss? | Suggestive (ρ = −0.30; p = 0.06), **not demonstrated** |
+| Can machine learning map ice under ash? | **Not yet.** F1 = 0.88 with leave-one-scene-out, but 0.25 with leave-one-sector-out (same as the NDSI baseline): the apparent skill was spatial leakage |
 
-📄 **Informe metodológico completo:** [`reports/informe_metodologia_nevado_del_ruiz.pdf`](reports/informe_metodologia_nevado_del_ruiz.pdf) — incluye todo lo que falló y por qué.
+📄 **Full methodology report (English):** [`reports/methodology_report_nevado_del_ruiz_en.pdf`](reports/methodology_report_nevado_del_ruiz_en.pdf) · Spanish: [`reports/informe_metodologia_nevado_del_ruiz.pdf`](reports/informe_metodologia_nevado_del_ruiz.pdf). Both include everything that failed and why.
 
-![Ceniza sobre el glaciar, Sentinel-2](reports/figuras/s2_periodo_critico.png)
+![Ash over the glacier, Sentinel-2](reports/figuras/s2_periodo_critico.png)
+*Sentinel-2, critical period. Top: true colour (ash appears grey). Bottom: false colour SWIR1-NIR-Green (ice under ash shows as dull blue-green with the glacier's shape).*
 
-## Lo que falló (y se conserva documentado)
+## What failed (and is kept on record)
 
-Un método automático estándar (máscara de nubes Fmask + NDSI) aceptó **5 de 2102 escenas Landsat**: inservible sobre el glaciar. Tres versiones del algoritmo (`gee/01_*`, `gee/02_*`) dieron series imposibles antes de identificar la causa: nubes de hielo, nieve fresca y ceniza. La solución fue selección visual de escenas con un criterio independiente, contornos semiautomáticos con análisis de sensibilidad y validación cruzada entre sensores.
+- **Automatic mapping.** A standard pipeline (Fmask cloud mask + NDSI) accepted **5 of 2,102 Landsat scenes**, so it was unusable over this glacier. Three algorithm versions (`gee/01_*`, `gee/02_*`) produced physically impossible series before the cause was identified: ice clouds, fresh snow and volcanic ash. The fix was visual scene selection with an independent criterion, semi-automatic outlines with sensitivity analysis, and cross-sensor validation.
+- **Machine learning.** Random Forest and XGBoost with spectral, thermal and terrain features scored **F1 = 0.88** when leaving one scene out. When a whole sector of the glacier was held out, F1 fell to **~0.25**. Permutation importance showed elevation dominating: the model learned *where* the glacier is, not *what ash-covered ice looks like*. Details: [`validation/ml_hielo_bajo_ceniza.md`](validation/ml_hielo_bajo_ceniza.md).
 
-## Estructura
+![ML: leave-one-scene-out vs leave-one-sector-out](reports/figuras/ml_ice_under_ash_en.png)
 
-| Carpeta | Contenido |
+## Repository layout
+
+| Folder | Contents |
 |---|---|
-| `gee/` | Scripts de Google Earth Engine, numerados en orden de ejecución |
-| `python/` | Contornos, análisis estadístico, figuras e informe (Python de QGIS 4.0.2) |
-| `qgis/` | Proyecto QGIS y contornos (GeoPackage) |
-| `data/processed/` | Series y tablas derivadas (CSV) |
-| `data_registry/` | Ficha de cada fuente: procesamiento del proveedor, resolución, licencia |
-| `sampling/` | Selección visual de escenas |
-| `validation/` | Auditoría de MapBiomas, resultados de clima |
-| `reports/` | Informe PDF, figuras, piezas de comunicación |
+| `gee/` | Google Earth Engine scripts, numbered in execution order |
+| `python/` | Outlines, statistics, ML, figures and report (QGIS 4.0.2 Python) |
+| `qgis/` | QGIS project and outlines (GeoPackage) |
+| `data/processed/` | Derived series and tables (CSV) |
+| `data_registry/` | One record per data source: provider processing, resolution, licence |
+| `sampling/` | Visual scene selection |
+| `validation/` | MapBiomas audit, climate results, ML results |
+| `reports/` | PDF reports (EN/ES), figures, communication pieces |
 
-Los datos crudos (`data/raw/`) no se versionan: se regeneran con `gee/04_descargas_para_qgis.js` y `gee/06_clima_mensual.js`.
+Raw data (`data/raw/`) is not versioned. It is regenerated with `gee/04`, `gee/06` and `gee/07`.
 
-## Cómo reproducir
+## How to reproduce
 
-1. Ejecutar en el [Code Editor de Earth Engine](https://code.earthengine.google.com) `gee/03` → `gee/04` (descarga de GeoTIFF a `data/raw/`) → `gee/05` → `gee/06`.
-2. Descargar el ONI de NOAA (`https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`) en `data/raw/clima/oni_noaa_cpc.txt`.
-3. Con el Python de QGIS:
+1. In the [Earth Engine Code Editor](https://code.earthengine.google.com), run `gee/03` → `gee/04` (GeoTIFF download into `data/raw/`) → `gee/05` → `gee/06` → `gee/07`.
+2. Download NOAA's ONI (`https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`) into `data/raw/clima/oni_noaa_cpc.txt`.
+3. For machine learning, install scikit-learn and XGBoost for QGIS's Python into `.pylibs/`:
    ```
-   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" python\crear_proyecto_qgis.py
-   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" python\delinear_semiauto.py
-   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" python\analisis_clima_glaciar.py
-   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" python\piezas_comunicacion.py
-   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" python\informe_metodologia.py
+   "C:\Program Files\QGIS 4.0.2\bin\python-qgis.bat" -m pip install --target .pylibs --no-deps scikit-learn joblib threadpoolctl cloudpickle xgboost
    ```
+4. With QGIS's Python, run in order: `crear_proyecto_qgis.py`, `delinear_semiauto.py`, `analisis_clima_glaciar.py`, `ml_hielo_bajo_ceniza.py`, `piezas_comunicacion.py`, `informe_metodologia.py`, `methodology_report_en.py`.
 
-## Estado y próximos pasos
+## Status and next steps
 
-| Fase | Estado |
+| Phase | Status |
 |---|---|
-| Series automáticas Landsat (v1–v3) | Descartadas y documentadas |
-| Serie MapBiomas + auditoría con contornos propios | Hecho (contornos semiautomáticos, pendiente revisión manual) |
-| Sentinel-2 + Cloud Score+ | Hecho |
-| Clima y El Niño | Hecho (exploratorio) |
-| Machine Learning para hielo bajo ceniza (v1) | Hecho: resultado negativo documentado — el ML parece funcionar (F1 0,88) pero se cae al dejar un sector fuera (F1 ≈ 0,25, igual que NDSI). Ver [`validation/ml_hielo_bajo_ceniza.md`](validation/ml_hielo_bajo_ceniza.md) |
-| ML v2: Sentinel-1 radar, etiquetas independientes, transferencia a otro glaciar | Próximo |
-| Páramo por franjas altitudinales · transferencia a Santa Isabel, Tolima y El Cocuy | Pendiente |
+| Automatic Landsat series (v1–v3) | Discarded and documented |
+| MapBiomas series + audit with own outlines | Done (semi-automatic outlines, manual review pending) |
+| Sentinel-2 + Cloud Score+ | Done |
+| Climate and El Niño | Done (exploratory) |
+| ML for ice under ash (v1) | Done: documented negative result |
+| ML v2: Sentinel-1 radar, independent labels, transfer to another glacier | Next |
+| Páramo by elevation band · transfer to Santa Isabel, Tolima and El Cocuy | Pending |
 
-## Datos y licencias
+## Data and licences
 
-Datos 100 % abiertos: USGS Landsat Collection 2, Copernicus Sentinel-2 y Cloud Score+ (Google), MapBiomas Colombia Colección 3, Copernicus DEM GLO-30, ERA5-Land (ECMWF), CHIRPS (UCSB-CHC), ONI (NOAA CPC). Detalle en [`data_registry/fuentes.md`](data_registry/fuentes.md). La licencia de reutilización de MapBiomas Colombia está pendiente de confirmar.
+100 % open data: USGS Landsat Collection 2, Copernicus Sentinel-2 and Cloud Score+ (Google), MapBiomas Colombia Collection 3, Copernicus DEM GLO-30, ERA5-Land (ECMWF), CHIRPS (UCSB-CHC), ONI (NOAA CPC). Details in [`data_registry/fuentes.md`](data_registry/fuentes.md). The reuse licence for MapBiomas Colombia is still to be confirmed.
 
-Código: MIT. Textos, figuras e informe: CC BY 4.0. Ver [`LICENSE`](LICENSE).
+Code: MIT. Text, figures and reports: CC BY 4.0. See [`LICENSE`](LICENSE).
 
-*Las cifras son estimaciones a partir de datos satelitales y reanálisis, no mediciones de campo.*
+*All figures are estimates from satellite data and reanalysis, not field measurements.*

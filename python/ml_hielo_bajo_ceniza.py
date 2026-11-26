@@ -46,6 +46,9 @@ RNG = np.random.default_rng(42)
 ML = R / "data" / "raw" / "ml"
 OUTP, FIG, VAL = R / "data" / "processed", R / "reports" / "figuras", R / "validation"
 PX_KM2 = 0.0009
+import os
+EN = os.environ.get("ANTARES_LANG") == "en"
+T = lambda es, en: en if EN else es
 
 ESCENAS = {  # escena: (tipo, fecha del contorno de referencia o None)
     "LC08_009056_20231203_ceniza": ("ceniza", "2024-08-15"),
@@ -286,10 +289,10 @@ print(open(VAL / "ml_resultados.txt", encoding="utf-8").read())
 # ------------------------------------------------------------------ figura
 VENT = 3300
 filas_fig = ["LC08_009056_20231203_ceniza", "LC08_009056_20240104_ceniza", "LC09_009056_20250114_ceniza"]
-cols = [("Imagen (SWIR1-NIR-Verde)", None, None),
-        ("Línea base NDSI > 0,40", "NDSI_0.40", ("A_escena", "NDSI_0.40", "-")),
-        ("XGBoost + térmico + topografía\n(dejando la escena fuera)", "XGBoost|STT", ("A_escena", "XGBoost", "STT")),
-        ("XGBoost + térmico\n(dejando el sector fuera)", "B|XGBoost|ST", ("B_sector", "XGBoost", "ST"))]
+cols = [(T("Imagen (SWIR1-NIR-Verde)", "Image (SWIR1-NIR-Green)"), None, None),
+        (T("Línea base NDSI > 0,40", "Baseline NDSI > 0.40"), "NDSI_0.40", ("A_escena", "NDSI_0.40", "-")),
+        (T("XGBoost + térmico + topografía\n(dejando la escena fuera)", "XGBoost + thermal + terrain\n(leave-one-scene-out)"), "XGBoost|STT", ("A_escena", "XGBoost", "STT")),
+        (T("XGBoost + térmico\n(dejando el sector fuera)", "XGBoost + thermal\n(leave-one-sector-out)"), "B|XGBoost|ST", ("B_sector", "XGBoost", "ST"))]
 fig, axs = plt.subplots(len(filas_fig), len(cols), figsize=(13, 3.4 * len(filas_fig)), dpi=130)
 ext = [GT[0], GT[0] + GT[1] * NX, GT[3] + GT[5] * NY, GT[3]]
 for i, e in enumerate(filas_fig):
@@ -301,14 +304,15 @@ for i, e in enumerate(filas_fig):
             ov = np.zeros((NY, NX, 4)); ov[pred] = [0.0, 0.9, 1.0, 0.55]
             ax.imshow(ov, extent=ext)
             r = res[(res.validacion == met[0]) & (res.escena == e) & (res.modelo == met[1]) & (res.vars == met[2])].iloc[0]
-            ax.text(0.03, 0.04, f"F1={r.f1:.2f}  área={r.area_pred:.2f} km²", transform=ax.transAxes,
+            ax.text(0.03, 0.04, f"F1={r.f1:.2f}  " + T("área", "area") + f"={r.area_pred:.2f} km²", transform=ax.transAxes,
                     color="white", fontsize=8, bbox=dict(facecolor="black", alpha=0.55, lw=0))
         ax.contour(X, Y, d["y"].astype(float), levels=[0.5], colors="#ff2b2b", linewidths=0.9)
         ax.set_xlim(cx - VENT, cx + VENT); ax.set_ylim(cy - VENT, cy + VENT); ax.set_xticks([]); ax.set_yticks([])
         if i == 0: ax.set_title(titulo, fontsize=9.5)
     fe = e.split("_")[2]
-    axs[i, 0].set_ylabel(f"{fe[:4]}-{fe[4:6]}-{fe[6:]}\n(ceniza)", fontsize=9)
-fig.suptitle("¿Hielo bajo ceniza? Rojo: contorno de referencia (escena limpia de ago-2024) · cian: predicción", fontsize=10.5)
+    axs[i, 0].set_ylabel(f"{fe[:4]}-{fe[4:6]}-{fe[6:]}\n" + T("(ceniza)", "(ash)"), fontsize=9)
+fig.suptitle(T("¿Hielo bajo ceniza? Rojo: contorno de referencia (escena limpia de ago-2024) · cian: predicción", "Ice under ash? Red: reference outline (clean scene, Aug 2024) · cyan: prediction"), fontsize=10.5)
 fig.tight_layout(rect=(0, 0, 1, 0.96))
-fig.savefig(FIG / "ml_hielo_bajo_ceniza.png"); plt.close(fig)
-print("Figura:", FIG / "ml_hielo_bajo_ceniza.png")
+salida = FIG / ("ml_ice_under_ash_en.png" if EN else "ml_hielo_bajo_ceniza.png")
+fig.savefig(salida); plt.close(fig)
+print("Figura:", salida)
